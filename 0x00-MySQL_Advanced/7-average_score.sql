@@ -14,7 +14,7 @@ BEGIN
         
 	DECLARE avg_score DECIMAL;
 	
-	SELECT AVG(score) INTO avg_score FROM corrections WHERE user_id = target_user_id GROUP BY user_id;
+	SELECT AVG(score) INTO avg_score FROM corrections WHERE user_id = target_user_id;
         
 	-- Inserting the average score into users table with target_user_id
 	UPDATE users SET average_score = avg_score WHERE id = target_user_id;	
