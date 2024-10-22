@@ -11,4 +11,4 @@ def update_topics(mongo_collection, name, topics):
     # Document key and new value to be update
     update_operation = {'$set': {'topics': topics}}
     # updating document ...
-    mongo_collection.update_one(query_filter, update_operation)
+    mongo_collection.update_many(query_filter, update_operation)
