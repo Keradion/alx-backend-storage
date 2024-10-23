@@ -7,6 +7,9 @@ from typing import Union
 
 
 class Cache:
+    """
+       Cache class to initialize and manage Redis instance
+    """
     def __init__(self) -> None:
         """
            Create Redis instance and clear existing key value pairs
