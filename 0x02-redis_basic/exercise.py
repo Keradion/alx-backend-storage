@@ -32,3 +32,26 @@ class Cache:
 
         return random_key
 
+    def get(self, key: str, fn: callable=None) -> any:
+        # Fetching the value associated with key in redis
+        value = self.__redis.get(key)
+        if not value:
+            return 
+        if fn is int:
+            self.get_int(value)
+        if fn is str:
+            self.get_str(value)
+
+
+    def get_str(self, value: byte) -> str:
+        """
+           Converts byte to string 
+        """
+        return value.decode('utf-8')
+
+    def get_int(self, value: byte) -> int:
+        """
+           Converts byte to integer
+        """
+        return int(value)
+
