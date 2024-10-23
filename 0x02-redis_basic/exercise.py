@@ -5,8 +5,8 @@ import uuid
 from typing import Union
 
 
-class Cache():
-    def __init__(self):
+class Cache:
+    def __init__(self) -> None:
         '''
            Create Redis instance
         '''
