@@ -25,7 +25,7 @@ class Cache:
             store the data in redis using the key and return the key
         """
         # Generating a random key using uuid
-        random_key = str(uuid.uuid4())
+        random_key: str = str(uuid.uuid4())
 
         # Storing the data on redis db using random_key as key
         self.__redis.set(random_key, data)
@@ -34,13 +34,14 @@ class Cache:
 
     def get(self, key: str, fn: callable=None) -> any:
         # Fetching the value associated with key in redis
-        value = self.__redis.get(key)
+        value: str = self.__redis.get(key)
         if not value:
             return 
         if fn is int:
-            self.get_int(value)
+            return self.get_int(value)
         if fn is str:
-            self.get_str(value)
+            return self.get_str(value)
+        return value
 
 
     def get_str(self, value: bytes) -> str:
