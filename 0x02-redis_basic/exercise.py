@@ -32,7 +32,7 @@ class Cache:
 
         return random_key
 
-    def get(self, key: str, fn: callable=None) -> any:
+    def get(self, key: str, fn: Optional[callable] = None) -> any:
         # Fetching the value associated with key in redis
         value: str = self.__redis.get(key)
         if not value:
