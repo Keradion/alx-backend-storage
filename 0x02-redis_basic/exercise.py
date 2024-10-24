@@ -3,13 +3,13 @@
 """
 import redis
 import uuid
-from typing import Union, Callable
+from typing import Union, Callable, Ang
 from functools import wraps
 
 def count_calls(method: Callable) -> Callable:
     """ Decorater that takes a single method and returns a callable """
     @wraps(method)
-    def increment_key_value(self, *args, **kwargs):
+    def increment_key_value(self: Any, *args, **kwargs) -> str:
         """ Wraps store cache function and Increment the value associated with key
             every time store function is called
         """
@@ -45,7 +45,7 @@ class Cache:
 
         return random_key
     
-    def get(self, key: str, fn: callable = None) -> any:
+    def get(self, key: str, fn: callable = None) -> Any:
         # Fetching the value associated with key in redis
         value: str = self._redis.get(key)
         if not value:
