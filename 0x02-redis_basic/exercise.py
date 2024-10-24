@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-""" Writing strings to Redis database key value pair
+"""
+   working with redis 
 """
 import redis
 import uuid
-from typing import Union, Callable, Ang
+from typing import Union, Callable, Any
 from functools import wraps
 
 def count_calls(method: Callable) -> Callable:
@@ -14,7 +15,7 @@ def count_calls(method: Callable) -> Callable:
             every time store function is called
         """
         self._redis.incr(method.__qualname__)  # Increment the value of the key by 1
-        return function_store(self, *args, **kwargs)
+        return method(self, *args, **kwargs)
     return increment_key_value
 
 class Cache:
