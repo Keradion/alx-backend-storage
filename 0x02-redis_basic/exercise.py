@@ -3,8 +3,19 @@
 """
 import redis
 import uuid
-from typing import Union
+from typing import Union, Callable
+from functools import wraps
 
+def count_calls(function_store: Callable) -> Callable:
+    """ Decorater that takes a single method and returns a callable """
+    @wraps(function_store)
+    def increment_key_value(self, *args, **kwargs):
+        """ Wraps store cache function and Increment the value associated with key
+            every time store function is called
+        """
+        self._redis.incr(function_store.__qualname__)  # Increment the value of the key by 1
+        return function_store(self, *args, **kwargs)
+    return increment_key_value
 
 class Cache:
     """
@@ -19,11 +30,13 @@ class Cache:
         # Delete all keys in the current Redis instance db __redis
         self._redis.flushdb()
 
+    @count_calls
     def store(self, data: Union[str, bytes, int, float]) -> str:
         """
             Takes data argument and generate a random key
             store the data in redis using the key and return the key
         """
+
         # Generating a random key using uuid
         random_key: str = str(uuid.uuid4())
 
@@ -31,10 +44,10 @@ class Cache:
         self._redis.set(random_key, data)
 
         return random_key
-
-    def get(self, key: str, fn: Optional[callable] = None) -> any:
+    
+    def get(self, key: str, fn: callable = None) -> any:
         # Fetching the value associated with key in redis
-        value: str = self.__redis.get(key)
+        value: str = self._redis.get(key)
         if not value:
             return 
         if fn is int:
