@@ -6,14 +6,14 @@ import uuid
 from typing import Union, Callable
 from functools import wraps
 
-def count_calls(function_store: Callable) -> Callable:
+def count_calls(method: Callable) -> Callable:
     """ Decorater that takes a single method and returns a callable """
-    @wraps(function_store)
+    @wraps(method)
     def increment_key_value(self, *args, **kwargs):
         """ Wraps store cache function and Increment the value associated with key
             every time store function is called
         """
-        self._redis.incr(function_store.__qualname__)  # Increment the value of the key by 1
+        self._redis.incr(method.__qualname__)  # Increment the value of the key by 1
         return function_store(self, *args, **kwargs)
     return increment_key_value
 
