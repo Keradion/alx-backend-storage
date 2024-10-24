@@ -43,13 +43,13 @@ class Cache:
             self.get_str(value)
 
 
-    def get_str(self, value: byte) -> str:
+    def get_str(self, value: bytes) -> str:
         """
            Converts byte to string 
         """
         return value.decode('utf-8')
 
-    def get_int(self, value: byte) -> int:
+    def get_int(self, value: bytes) -> int:
         """
            Converts byte to integer
         """
