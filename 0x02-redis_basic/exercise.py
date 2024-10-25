@@ -7,6 +7,7 @@ import uuid
 from typing import Union, Callable, Any
 from functools import wraps
 
+
 def count_calls(method: Callable) -> Callable:
     """ Decorater that takes a single method and returns a callable """
     @wraps(method)
@@ -17,6 +18,27 @@ def count_calls(method: Callable) -> Callable:
         self._redis.incr(method.__qualname__)  # Increment the value of the key by 1
         return method(self, *args, **kwargs)
     return increment_key_value
+
+
+def call_history(method: Callable) -> Callable:
+    """ Decorator that store inputs and outputs of
+        the function cache.store in a redis list
+    """
+    @wraps(method)
+    def wrapper(self: Any, *args, **kwargs):
+        """ Append input parameters of catch.store inside a list
+            and append output of cache.store inside another list
+        """
+        # Appending the input parameter inside inputs redis list
+        self._redis.rpush(f'{method.__qualname__}:inputs', str(args))
+
+        return_value  = method(self, *args)
+
+        # Appending the return value of catch.store inside output redis list
+        self._redis.rpush(f'{method.__qualname__}:outputs', return_value)
+        return return_value
+    return wrapper
+
 
 class Cache:
     """
@@ -31,6 +53,8 @@ class Cache:
         # Delete all keys in the current Redis instance db __redis
         self._redis.flushdb()
 
+    
+    @call_history
     @count_calls
     def store(self, data: Union[str, bytes, int, float]) -> str:
         """
@@ -69,4 +93,3 @@ class Cache:
            Converts byte to integer
         """
         return int(value)
-
