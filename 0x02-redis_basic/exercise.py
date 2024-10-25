@@ -93,3 +93,12 @@ class Cache:
            Converts byte to integer
         """
         return int(value)
+    
+    def replay(self):
+        """ Print number of times a method called with key and value """
+        print("Catch.store was called {} times:".format(len(self.store.__qualname__)))
+        inputs = self._redis.lrange("{}:inputs".format(self.store.__qualname__), 0, -1)
+        outputs = self._redis.lrange("{}:outputs".format(self.store.__qualname__), 0, -1)
+        input_output = list(zip(inputs, outputs))
+        for key_value_pair in input_output:
+            print("Cache.store(*{}) -> {}".format(key_value_pair[0].decode('utf-8'), (key_value_pair[1]).decode('utf-8')))
