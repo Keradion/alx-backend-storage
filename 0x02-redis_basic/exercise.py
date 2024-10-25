@@ -45,7 +45,7 @@ def replay(function: Callable) -> None:
     client = redis.Redis()
     no_calls = client.get(function.__qualname__).decode('utf-8')
     print("Cache.store was called {} times:".format(
-        len(not_calls)))
+        len(no_calls)))
     inputs = client.lrange("{}:inputs".format(
         function.__qualname__), 0, -1)
     outputs = client.lrange("{}:outputs".format(
