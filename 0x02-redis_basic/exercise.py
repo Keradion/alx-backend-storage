@@ -39,6 +39,21 @@ def call_history(method: Callable) -> Callable:
         return return_value
     return wrapper
 
+def replay(function: Callable) -> None:
+    """ Print number of times a method called with key and value """
+    client = redis.Redis()
+    no_calls = client.get(function.__qualname__).decode('utf-8')
+    print("Cache.store was called {} times:".format(
+        len(not_calls)))
+    inputs = client.lrange("{}:inputs".format(
+        function.__qualname__), 0, -1)
+    outputs = client.lrange("{}:outputs".format(
+        function.__qualname__), 0, -1)
+    input_output = list(zip(inputs, outputs))
+    for key_value_pair in input_output:
+        print("Cache.store(*{}) -> {}".format(
+            key_value_pair[0].decode(
+                'utf-8'), (key_value_pair[1]).decode('utf-8')))
 
 class Cache:
     """
