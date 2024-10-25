@@ -44,17 +44,15 @@ def replay(function: Callable) -> None:
     """ Print number of times a method called with key and value """
     client = redis.Redis()
     no_calls = client.get(function.__qualname__).decode('utf-8')
-    print("{} was called {} times:".format(function.__qualname__,
-        len(no_calls)))
+    print("{} was called {} times:".format(
+        function.__qualname__, len(no_calls)))
     inputs = client.lrange("{}:inputs".format(
         function.__qualname__), 0, -1)
     outputs = client.lrange("{}:outputs".format(
         function.__qualname__), 0, -1)
-    input_output = list(zip(inputs, outputs))
-    for key_value_pair in input_output:
-        print("{}(*{}) -> {}".format(function.__qualname__,
-            key_value_pair[0].decode(
-                'utf-8'), (key_value_pair[1]).decode('utf-8')))
+    for key, value in zip(inputs, outputs):
+        print("{}(*{}) -> {}".format(
+            function.__qualname__, key.decode('utf-8'), value.decode('utf-8')))
 
 
 class Cache:
