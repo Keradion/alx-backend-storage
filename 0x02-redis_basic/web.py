@@ -1,37 +1,36 @@
 #!/usr/bin/env python3
 """
-   Catch a web page response 
+Caching request module
 """
 import redis
 import requests
-from typing import Callable, Any
 from functools import wraps
+from typing import Callable
 
-def track_get_page(method: Callable) -> Callable:
-    """ Returns wrapper """
-    @wraps(method)
-    def wrapper(self: Any, *args, **kwargs) -> str:
-        self._redis.incr(f'count:{args[0]}')
-        cached_page = self._redis.get(f'count:{args[0]}')
+
+def track_get_page(fn: Callable) -> Callable:
+    """ Decorator for get_page
+    """
+    @wraps(fn)
+    def wrapper(url: str) -> str:
+        """ Wrapper that:
+            - check whether a url's data is cached
+            - tracks how many times get_page is called
+        """
+        client = redis.Redis()
+        client.incr(f'count:{url}')
+        cached_page = client.get(f'{url}')
         if cached_page:
-            return chached_page.decode('utf-8')
-
-        result = method(self, *args, **kwargs)
-        self._redis.set(f'{arg[0]}', result, 10)
-        return result
+            return cached_page.decode('utf-8')
+        response = fn(url)
+        client.set(f'{url}', response, 10)
+        return response
     return wrapper
 
-class Cache:
-    """ Cache class """
-    def __init__(self) -> None:
-        self._redis = redis.Redis()
-        self._redis.flushdb()
 
-    @track_get_page
-    def get_page(self, url: str) -> str:
-        """ 
-            Perform an http request and return the body
-            of the response
-        """
-        html_page = requests.get(url)
-        return html_page.text
+@track_get_page
+def get_page(url: str) -> str:
+    """ Makes a http request to a given endpoint
+    """
+    response = requests.get(url)
+    return response.text
