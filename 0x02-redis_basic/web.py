@@ -18,6 +18,7 @@ def track_get_page(method: Callable) -> Callable:
 
         result = method(self, *args, **kwargs)
         self._redis.set(f'{arg[0]}', result, 10)
+        return result
     return wrapper
 
 class Cache:
