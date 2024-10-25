@@ -95,7 +95,7 @@ class Cache:
 
     def replay(self):
         """ Print number of times a method called with key and value """
-        print("Catch.store was called {} times:".format(
+        print("Cache.store was called {} times:".format(
             len(self.store.__qualname__)))
         inputs = self._redis.lrange("{}:inputs".format(
             self.store.__qualname__), 0, -1)
