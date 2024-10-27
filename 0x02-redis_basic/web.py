@@ -25,14 +25,13 @@ def count_url(method: Callable) -> Callable:
         
         # Check if the URL html content is already in the cache
         html_content = redis_client.get(url_cache_key)
+        html_content = html_content.decode('utf-8')
 
         # If the url html content is not in the cache, store it for 10 sec.
         if not html_content:
             html_content = method(url)
             redis_client.setex(url_cache_key, 10, html_content)
-            print(redis_client.ttl(url_cache_key))
-            print('Not in the cache')
-
+            
         return html_content
     return wrapper
 
