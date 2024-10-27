@@ -23,7 +23,6 @@ def count_url(method: Callable) -> Callable:
         url_cache_key = '{}'.format(url)
         redis_client.incr(url_count_key)
         
-        html_content = method(url)
         # Check if the URL html content is already in the cache
         html_content = redis_client.get(url_cache_key)
 
@@ -31,6 +30,9 @@ def count_url(method: Callable) -> Callable:
         if not html_content:
             html_content = method(url)
             redis_client.setex(url_cache_key, 10, html_content)
+            print(redis_client.ttl(url_cache_key))
+            print('Not in the cache')
+
         return html_content
     return wrapper
 
@@ -40,3 +42,4 @@ def get_page(url: str) -> str:
     """ Fetch html content of a url using request and return it """
     html_page = requests.get(url)
     return html_page.content
+
