@@ -45,7 +45,7 @@ def replay(function: Callable) -> None:
     client = redis.Redis()
     no_calls = client.get(function.__qualname__).decode('utf-8')
     print("{} was called {} times:".format(
-        function.__qualname__, len(no_calls)))
+        function.__qualname__, no_calls))
     inputs = client.lrange("{}:inputs".format(
         function.__qualname__), 0, -1)
     outputs = client.lrange("{}:outputs".format(
