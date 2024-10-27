@@ -41,5 +41,4 @@ def count_url(method: Callable) -> Callable:
 def get_page(url: str) -> str:
     """ Fetch html content of a url using request and return it """
     html_page = requests.get(url)
-    return html_page.content
-
+    return html_page.text
